@@ -8,6 +8,7 @@ const casos = [
 
 const results: {
     ok: boolean,
+    code: string,
     message: string
 }[] = []
 
@@ -18,8 +19,8 @@ for (const messageResult of casos) {
     const ok = code !== '99' && Number(code) >= 0;
     messageSplit.shift()
     const message = messageSplit.join('=');
-    
-    results.push({ ok, message })
+
+    results.push({ ok, code, message })
 
 }
 

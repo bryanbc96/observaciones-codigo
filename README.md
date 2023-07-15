@@ -1,5 +1,15 @@
 # Casos
 
+-  1 - [Uso de funciones en SCSS](#1---uso-de-funciones-en-scss)
+-  2 - [Anidar clases en SCSS](#2---anidar-clases-en-scss)
+-  3 - [Uso de forkJoin en Angular](#3---uso-de-forkjoin-en-angular)
+-  4 - [Simplificar filtros](#4---simplificar-filtros)
+-  5 - [Uso del for of](#5---uso-del-for-of)
+-  6 - [Mal uso del Var](#6---mal-uso-del-var)
+-  7 - [Variables declaradas para un uso de const](#7---variables-declaradas-para-un-uso-de-const)
+-  8 - [Uso de método map de los arreglos](#8---uso-de-método-map-de-los-arreglos)
+-  9 - [Uso de find en lugar de filter](#9---uso-de-find-en-lugar-de-filter)
+
 ## 1 - Uso de funciones en SCSS
 
 ### Incorrecto ❌
@@ -58,20 +68,20 @@
     margin-bottom: 1rem;    
 }
 
-.card.header{
+.card .header{
     background-color: #f5f5f5;
     padding: 1rem;
 }
 
-.card.body{
+.card .body{
     padding: 1rem;
 }
 
-.card.body:hover{
-    background-color: #f5f5f5;
+.card .body:hover{
+    background-color: #c1c1c1;
 }
 
-.card.footer{
+.card .footer{
     background-color: #f5f5f5;
     padding: 1rem;
 }
@@ -86,21 +96,21 @@
     max-width: 10rem;
     margin-bottom: 1rem;    
 
-    &.header{
+    .header{
         background-color: #f5f5f5;
         padding: 1rem;
     }
 
-    &.body{
+    .body{
         padding: 1rem;
 
         &:hover{
-            background-color: #f5f5f5;
+            background-color: #c1c1c1;
         }
 
     }
 
-    &.footer{
+    .footer{
         background-color: #f5f5f5;
         padding: 1rem;
     }
@@ -252,9 +262,43 @@ forkJoin([
 ### No recomendado ❌
 
 ![Alt text](recursos/let-const.jpeg)
+```typescript
+this.cartografiaGeoJsonFull.features = []
+const resultCartografia = result[0].data
+resultCartografia.forEach(element => {
+  let item: any = {
+    type: "Feature",
+    properties: {
+      clave: element.clave,
+      nivel: element.nivel
+    },
+    geometry: JSON.parse(element.geojson)
+  }
+  this.cartografiaGeoJsonFull.features.push(item)
+})
+
+console.log(this.cartogradiaGeoJsonFull)
+```
 
 ### Recomendado ✅
 
+```typescript
+this.cartografiaGeoJsonFull.features = []
+const resultCartografia = result[0].data
+resultCartografia.forEach(element => {
+  const item = {
+    type: "Feature",
+    properties: {
+      clave: element.clave,
+      nivel: element.nivel
+    },
+    geometry: JSON.parse(element.geojson)
+  }
+  this.cartografiaGeoJsonFull.features.push(item)
+})
+
+console.log(this.cartogradiaGeoJsonFull)
+```
 ```typescript
 this.cartogradiaGeoJsonFull.features = result[0].data
     .map(element=>({
@@ -267,4 +311,64 @@ this.cartogradiaGeoJsonFull.features = result[0].data
     }))
 
 console.log(this.cartogradiaGeoJsonFull)
+```
+
+## 8 - Uso de método map de los arreglos
+
+### No recomendado ❌
+
+```typescript
+
+const list = []
+for (const element of this.list) {
+    const item = {
+        id: element.id,
+        name: element.name,
+        age: element.age
+    }
+    list.push(item)
+}
+
+```
+
+### Recomendado ✅
+
+```typescript
+
+const list = this.list.map(element => ({
+    id: element.id,
+    name: element.name,
+    age: element.age
+}))
+
+```
+
+## 9 - Uso de find en lugar de filter
+
+### No recomendado ❌
+
+```typescript
+
+const item = this.list.filter(element => element.id === 1)[0]
+
+```
+
+### Recomendado ✅
+
+```typescript
+const item = this.list.find(element => element.id === 1)
+```
+
+## 10 - Uso de || para asignar valores por defecto
+
+### No recomendado ❌
+
+```typescript
+const name = this.user.name ? this.user.name : 'Sin nombre'
+```
+
+### Recomendado ✅
+
+```typescript
+const name = this.user.name || 'Sin nombre'
 ```
