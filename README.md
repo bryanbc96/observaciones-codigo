@@ -407,7 +407,7 @@ const name = this.user.name || 'Sin nombre'
 ```typescript
 this.formGroupFilter = this.fb.group({
     fundoID: [-1], 
-    modulopID: [-1], 
+    moduloID: [-1], 
     loteID: [-1], 
 })
 
@@ -438,7 +438,7 @@ this.formGroupFilter.controls.loteID.valueChange(valor=>{
 ```typescript
 this.formGroupFilter = this.fb.group({
     fundoID: [-1], 
-    modulopID: [-1], 
+    moduloID: [-1], 
     loteID: [-1], 
 })
 
@@ -466,19 +466,19 @@ controls.loteID.valueChange(loteID=>{
 })
 ```
 
-## 12 - Uso de Map (Diccionarios) optimizar bucles
+## 12 - Uso de Map y Set (Diccionarios) optimizar bucles
 
 ### No recomendado ❌
 
 ```typescript
 const lotes = [{id:1, nombre:'lote 01', modulo:'MOD01'}, {id:2, nombre:'lote 02', modulo:'MOD02'}, ...] // 300 elementos
-const evaluaciones = [{id:100, loteID:1, fecha:'15/07/2023'}, {id:100, loteID:1, fecha:'15/07/2023'}, ...] // 1000 elementos
+const evaluaciones = [{id:100, loteID:1, fecha:'15/07/2023', lote:}, {id:100, loteID:1, fecha:'15/07/2023'}, ...] // 1000 elementos
 
 //* Añadimos los datos de los lotes a las evaluaciones
 // Esto generaria 300*1000 ITERACIONES
 for(let evaluacion of evaluaciones){
-    // const lote = lotes.filter(lote=>lote.id===evaluacion.id)[0] // Otro error común
-    const lote = lotes.find(lote=>lote.id===evaluacion.id) // frena la iteración hasta encontrar conincidencia
+    //const lote = lotes.filter(lote=>lote.id===evaluacion.loteID)[0] // Otro error común
+    const lote = lotes.find(lote=>lote.id===evaluacion.loteID) // frena la iteración hasta encontrar conincidencia
     evaluacion.lote = lote
     evaluacion.moduloNombre = lote.modulo
 }
@@ -500,8 +500,40 @@ const lotesMap = new Map(lotes.map(lote=>[lote.id, lote]))
 
 //* Añadimos los datos de los lotes a las evaluaciones
 for(const evaluacion of evaluaciones){
-    const lote = lotesMap.get(evaluacion.lote)
+    const lote = lotesMap.get(evaluacion.loteID)
     evaluacion.lote = lote
     evaluacion.moduloNombre = lote.modulo
 }
+```
+
+### Uso del Set() 
+
+```typescript
+
+const planillas = [
+    {id:1, codTrabajador:'123', fecha:'15/07/2023'},
+    {id:1, codTrabajador:'123', fecha:'14/07/2023'},
+    {id:1, codTrabajador:'123', fecha:'13/07/2023'},
+    {id:1, codTrabajador:'333', fecha:'15/07/2023'},
+    {id:1, codTrabajador:'666', fecha:'12/07/2023'},
+    {id:1, codTrabajador:'111', fecha:'14/07/2023'},
+    ...
+    {id:1, codTrabajador:'111', fecha:'14/07/2023'},
+] // 300 elementos
+
+// OPCION 1
+const trabajadoresSet = new Set()
+for(const planilla of planillas){ trabajadoresSet.add(planilla.codTrabajador) }
+
+// OPCION 2
+const trabajadoresSet2 = new Set(planillas.map(x=>x.codTrabajador))
+
+// 123,333,666,111
+console.log('Esta semana trabajaron: ', trabajadoresSet.size, 'trabajador(es)' )
+
+const juanCod = '123'
+const estaJuan = trabajadoresSet.has(juanCod) // boolean
+console.log('Esta Juan Trabajando?: ', estaJuan ? 'SI' : 'NO' )
+
+
 ```
