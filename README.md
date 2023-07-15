@@ -56,6 +56,33 @@
 
 ```
 
+```scss
+
+// Tambien podemos añadir Operadores
+@for $i from 1 through 10 {
+  .mat-column-#{$i * 20} {
+    flex: 0 0 #{$i *20}px !important;
+  }
+}
+
+/*
+    .mat-column-20 {
+        flex: 0 0 20px !important;
+    }
+
+    .mat-column-40 {
+        flex: 0 0 120px !important;
+    }
+
+    ...
+
+    .mat-column-200 {
+        flex: 0 0 140px !important;
+    }
+*/
+
+```
+
 
 ## 2 - Anidar clases en SCSS
 
