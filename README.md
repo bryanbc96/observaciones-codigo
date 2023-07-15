@@ -229,6 +229,7 @@ for (const [element,index] of this.array.entries()) {
 
 ```typescript
 for (const trabajador of this.listTrabajadores) {
+
     const detalles = this.listDetalleTrabajadores.filter(x => x.codigo === trabajador.codigo);
 
     for (const detalle of detalles){
@@ -241,10 +242,10 @@ for (const trabajador of this.listTrabajadores) {
             trabajador[cabecera.fecha] = 0
         }
     }
+    
 }
 
 this.fechasCabecera.reverse()
-
 ```
 
 ## 6 - Mal uso del Var
@@ -376,14 +377,21 @@ const list = this.list.map(element => ({
 
 ```typescript
 
-const item = this.list.filter(element => element.id === 1)[0]
+const item = this.list.filter(element => element.id === 1)[0] || 10
+if(item){
+    console.log(item)
+}
 
 ```
 
 ### Recomendado ✅
 
 ```typescript
-const item = this.list.find(element => element.id === 1)
+const item = this.list.find(element => element.id === 1) || 10
+
+if(item){
+    console.log(item)
+}
 ```
 
 ## 10 - Uso de || para asignar valores por defecto
