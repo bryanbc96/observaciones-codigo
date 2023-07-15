@@ -400,6 +400,74 @@ const name = this.user.name ? this.user.name : 'Sin nombre'
 const name = this.user.name || 'Sin nombre'
 ```
 
+## 11 - Uso de Destructuring
+
+### No recomendado ❌
+
+```typescript
+this.formGroupFilter = this.fb.group({
+    fundoID: [-1], 
+    modulopID: [-1], 
+    loteID: [-1], 
+})
+
+this.formGroupFilter.controls.fundoID.valueChange(valor=>{
+    this.modulosFiltered = listaModulos.filter(modulo=> 
+        +valor === modulo.fundoID
+    )
+})
+
+this.formGroupFilter.controls.moduloID.valueChange(valor=>{
+    this.lotesFiltered = listaLotes.filter(lote=>
+        this.formGroupFilter.controls.value.fundoID === lote.fundoID && 
+        +valor === lote.moduloID
+    )
+})
+
+this.formGroupFilter.controls.loteID.valueChange(valor=>{
+    this.variedadesFiltered = listaVariedades.filter(variedad=>
+        this.formGroupFilter.controls.value.fundoID === lote.fundoID && 
+        this.formGroupFilter.controls.value.moduloID === lote.moduloID && 
+        +valor = lote.id
+    )
+})
+```
+
+### Recomendado ✅
+
+```typescript
+this.formGroupFilter = this.fb.group({
+    fundoID: [-1], 
+    modulopID: [-1], 
+    loteID: [-1], 
+})
+
+const {controls, value} = this.formGroupFilter
+
+controls.fundoID.valueChange(fundoID=>{
+    this.modulosFiltered = listaModulos.filter(modulo=> 
+        +fundoID === modulo.fundoID
+    )
+})
+
+controls.moduloID.valueChange(moduloID=>{
+    this.lotesFiltered = listaLotes.filter(lote=>
+        value.fundoID === lote.fundoID && 
+        +moduloID === lote.moduloID
+    )
+})
+
+controls.loteID.valueChange(loteID=>{
+    this.variedadesFiltered = listaVariedades.filter(variedad=>
+        value.fundoID === variedad.fundoID && 
+        value.moduloID === variedad.moduloID && 
+        +loteID = lote.id
+    )
+})
+```
+
+## 12 - Uso de Map (Diccionarios) optimizar bucles
+
 ### No recomendado ❌
 
 ```typescript
