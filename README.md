@@ -399,3 +399,41 @@ const name = this.user.name ? this.user.name : 'Sin nombre'
 ```typescript
 const name = this.user.name || 'Sin nombre'
 ```
+
+### No recomendado ❌
+
+```typescript
+const lotes = [{id:1, nombre:'lote 01', modulo:'MOD01'}, {id:2, nombre:'lote 02', modulo:'MOD02'}, ...] // 300 elementos
+const evaluaciones = [{id:100, loteID:1, fecha:'15/07/2023'}, {id:100, loteID:1, fecha:'15/07/2023'}, ...] // 1000 elementos
+
+//* Añadimos los datos de los lotes a las evaluaciones
+// Esto generaria 300*1000 ITERACIONES
+for(let evaluacion of evaluaciones){
+    // const lote = lotes.filter(lote=>lote.id===evaluacion.id)[0] // Otro error común
+    const lote = lotes.find(lote=>lote.id===evaluacion.id) // frena la iteración hasta encontrar conincidencia
+    evaluacion.lote = lote
+    evaluacion.moduloNombre = lote.modulo
+}
+
+```
+
+### Recomendado ✅
+
+```typescript
+const lotes = [{id:1, nombre:'lote 01', modulo:'MOD01'}, {id:2, nombre:'lote 02', modulo:'MOD02'}, ...] // 300 elementos
+const evaluaciones = [{id:100, loteID:1, fecha:'15/07/2023'}, {id:100, loteID:1, fecha:'15/07/2023'}, ...] // 1000 elementos
+
+// OPCION 1
+const lotesMap = new Map()
+for(const lote of lotes){ lotesMap.set(lote.id, lote) }
+
+// OPCION 2
+const lotesMap = new Map(lotes.map(lote=>[lote.id, lote]))
+
+//* Añadimos los datos de los lotes a las evaluaciones
+for(const evaluacion of evaluaciones){
+    const lote = lotesMap.get(evaluacion.lote)
+    evaluacion.lote = lote
+    evaluacion.moduloNombre = lote.modulo
+}
+```
