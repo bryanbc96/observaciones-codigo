@@ -407,3 +407,141 @@ const name = this.user.name ? this.user.name : 'Sin nombre'
 ```typescript
 const name = this.user.name || 'Sin nombre'
 ```
+
+## 11 - Uso de Destructuring
+
+### No recomendado ❌
+
+```typescript
+this.formGroupFilter = this.fb.group({
+    fundoID: [-1], 
+    moduloID: [-1], 
+    loteID: [-1], 
+})
+
+this.formGroupFilter.controls.fundoID.valueChange(valor=>{
+    this.modulosFiltered = listaModulos.filter(modulo=> 
+        +valor === modulo.fundoID
+    )
+})
+
+this.formGroupFilter.controls.moduloID.valueChange(valor=>{
+    this.lotesFiltered = listaLotes.filter(lote=>
+        this.formGroupFilter.controls.value.fundoID === lote.fundoID && 
+        +valor === lote.moduloID
+    )
+})
+
+this.formGroupFilter.controls.loteID.valueChange(valor=>{
+    this.variedadesFiltered = listaVariedades.filter(variedad=>
+        this.formGroupFilter.controls.value.fundoID === lote.fundoID && 
+        this.formGroupFilter.controls.value.moduloID === lote.moduloID && 
+        +valor = lote.id
+    )
+})
+```
+
+### Recomendado ✅
+
+```typescript
+this.formGroupFilter = this.fb.group({
+    fundoID: [-1], 
+    moduloID: [-1], 
+    loteID: [-1], 
+})
+
+const {controls, value} = this.formGroupFilter
+
+controls.fundoID.valueChange(fundoID=>{
+    this.modulosFiltered = listaModulos.filter(modulo=> 
+        +fundoID === modulo.fundoID
+    )
+})
+
+controls.moduloID.valueChange(moduloID=>{
+    this.lotesFiltered = listaLotes.filter(lote=>
+        value.fundoID === lote.fundoID && 
+        +moduloID === lote.moduloID
+    )
+})
+
+controls.loteID.valueChange(loteID=>{
+    this.variedadesFiltered = listaVariedades.filter(variedad=>
+        value.fundoID === variedad.fundoID && 
+        value.moduloID === variedad.moduloID && 
+        +loteID = lote.id
+    )
+})
+```
+
+## 12 - Uso de Map y Set (Diccionarios) optimizar bucles
+
+### No recomendado ❌
+
+```typescript
+const lotes = [{id:1, nombre:'lote 01', modulo:'MOD01'}, {id:2, nombre:'lote 02', modulo:'MOD02'}, ...] // 300 elementos
+const evaluaciones = [{id:100, loteID:1, fecha:'15/07/2023', lote:}, {id:100, loteID:1, fecha:'15/07/2023'}, ...] // 1000 elementos
+
+//* Añadimos los datos de los lotes a las evaluaciones
+// Esto generaria 300*1000 ITERACIONES
+for(let evaluacion of evaluaciones){
+    //const lote = lotes.filter(lote=>lote.id===evaluacion.loteID)[0] // Otro error común
+    const lote = lotes.find(lote=>lote.id===evaluacion.loteID) // frena la iteración hasta encontrar conincidencia
+    evaluacion.lote = lote
+    evaluacion.moduloNombre = lote.modulo
+}
+
+```
+
+### Recomendado ✅
+
+```typescript
+const lotes = [{id:1, nombre:'lote 01', modulo:'MOD01'}, {id:2, nombre:'lote 02', modulo:'MOD02'}, ...] // 300 elementos
+const evaluaciones = [{id:100, loteID:1, fecha:'15/07/2023'}, {id:100, loteID:1, fecha:'15/07/2023'}, ...] // 1000 elementos
+
+// OPCION 1
+const lotesMap = new Map()
+for(const lote of lotes){ lotesMap.set(lote.id, lote) }
+
+// OPCION 2
+const lotesMap = new Map(lotes.map(lote=>[lote.id, lote]))
+
+//* Añadimos los datos de los lotes a las evaluaciones
+for(const evaluacion of evaluaciones){
+    const lote = lotesMap.get(evaluacion.loteID)
+    evaluacion.lote = lote
+    evaluacion.moduloNombre = lote.modulo
+}
+```
+
+### Uso del Set() 
+
+```typescript
+
+const planillas = [
+    {id:1, codTrabajador:'123', fecha:'15/07/2023'},
+    {id:1, codTrabajador:'123', fecha:'14/07/2023'},
+    {id:1, codTrabajador:'123', fecha:'13/07/2023'},
+    {id:1, codTrabajador:'333', fecha:'15/07/2023'},
+    {id:1, codTrabajador:'666', fecha:'12/07/2023'},
+    {id:1, codTrabajador:'111', fecha:'14/07/2023'},
+    ...
+    {id:1, codTrabajador:'111', fecha:'14/07/2023'},
+] // 300 elementos
+
+// OPCION 1
+const trabajadoresSet = new Set()
+for(const planilla of planillas){ trabajadoresSet.add(planilla.codTrabajador) }
+
+// OPCION 2
+const trabajadoresSet2 = new Set(planillas.map(x=>x.codTrabajador))
+
+// 123,333,666,111
+console.log('Esta semana trabajaron: ', trabajadoresSet.size, 'trabajador(es)' )
+
+const juanCod = '123'
+const estaJuan = trabajadoresSet.has(juanCod) // boolean
+console.log('Esta Juan Trabajando?: ', estaJuan ? 'SI' : 'NO' )
+
+
+```
