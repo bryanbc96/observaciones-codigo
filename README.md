@@ -1,14 +1,19 @@
 # Casos
 
--  1 - [Uso de funciones en SCSS](#1---uso-de-funciones-en-scss)
--  2 - [Anidar clases en SCSS](#2---anidar-clases-en-scss)
--  3 - [Uso de forkJoin en Angular](#3---uso-de-forkjoin-en-angular)
--  4 - [Simplificar filtros](#4---simplificar-filtros)
--  5 - [Uso del for of](#5---uso-del-for-of)
--  6 - [Mal uso del Var](#6---mal-uso-del-var)
--  7 - [Variables declaradas para un uso de const](#7---variables-declaradas-para-un-uso-de-const)
--  8 - [Uso de método map de los arreglos](#8---uso-de-método-map-de-los-arreglos)
--  9 - [Uso de find en lugar de filter](#9---uso-de-find-en-lugar-de-filter)
+- 1 - [Uso de funciones en SCSS](#1---uso-de-funciones-en-scss)
+- 2 - [Anidar clases en SCSS](#2---anidar-clases-en-scss)
+- 3 - [Uso de forkJoin en Angular](#3---uso-de-forkjoin-en-angular)
+- 4 - [Simplificar filtros](#4---simplificar-filtros)
+- 5 - [Uso del for of](#5---uso-del-for-of)
+- 6 - [Mal uso del Var](#6---mal-uso-del-var)
+- 7 - [Variables declaradas para un uso de const](#7---variables-declaradas-para-un-uso-de-const)
+- 8 - [Uso de método map de los arreglos](#8---uso-de-método-map-de-los-arreglos)
+- 9 - [Uso de find en lugar de filter](#9---uso-de-find-en-lugar-de-filter)
+- 10 - [Uso de || para asignar valores por defecto](#10---uso-de--para-asignar-valores-por-defecto)
+- 11 - [Uso de Destructuring](#11---uso-de-destructuring)
+- 12 - [Uso de Map y Set (Diccionarios) optimizar bucles](#12---uso-de-map-y-set-diccionarios-optimizar-bucles)
+- 13 - [Uso del Set()](#13---uso-del-set)
+
 
 ## 1 - Uso de funciones en SCSS
 
@@ -229,6 +234,7 @@ for (const [element,index] of this.array.entries()) {
 
 ```typescript
 for (const trabajador of this.listTrabajadores) {
+
     const detalles = this.listDetalleTrabajadores.filter(x => x.codigo === trabajador.codigo);
 
     for (const detalle of detalles){
@@ -241,10 +247,10 @@ for (const trabajador of this.listTrabajadores) {
             trabajador[cabecera.fecha] = 0
         }
     }
+    
 }
 
 this.fechasCabecera.reverse()
-
 ```
 
 ## 6 - Mal uso del Var
@@ -376,14 +382,21 @@ const list = this.list.map(element => ({
 
 ```typescript
 
-const item = this.list.filter(element => element.id === 1)[0]
+const item = this.list.filter(element => element.id === 1)[0] || 10
+if(item){
+    console.log(item)
+}
 
 ```
 
 ### Recomendado ✅
 
 ```typescript
-const item = this.list.find(element => element.id === 1)
+const item = this.list.find(element => element.id === 1) || 10
+
+if(item){
+    console.log(item)
+}
 ```
 
 ## 10 - Uso de || para asignar valores por defecto
@@ -506,7 +519,7 @@ for(const evaluacion of evaluaciones){
 }
 ```
 
-### Uso del Set() 
+## 13 - Uso del Set() 
 
 ```typescript
 
